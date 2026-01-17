@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from pydantic import BaseModel
 from pymongo import MongoClient
@@ -14,11 +16,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Connect to Atlas
-MONGO_URI = "mongodb+srv://zhtmichelle_db_user:tPwROf6KxSIKURYU@nwhacks26.exsxsye.mongodb.net/?appName=nwhacks26"
+load_dotenv()  # Load variables from .env
+
+MONGO_USER = os.getenv("MONGO_USER")
+MONGO_PASSWORD = os.getenv("MONGO_PASSWORD")
+MONGO_DB = os.getenv("MONGO_DB")
+MONGO_CLUSTER = os.getenv("MONGO_CLUSTER")
+
+MONGO_URI = f"mongodb+srv://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_CLUSTER}/{MONGO_DB}?retryWrites=true&w=majority"
+
 client = MongoClient(MONGO_URI)
-db = client.feedbackDB
-feedback_collection = db.feedbacks  # Collection to store feedback
+db = client[MONGO_DB]
+feedback_collection = db.feedbacks
+
 
 # Feedback schema
 class Feedback(BaseModel):
