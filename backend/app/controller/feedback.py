@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from datetime import datetime
+from datetime import datetime, timezone
 from app.models.feedback import Feedback
 from app.services.db import feedback_collection
 
@@ -8,8 +8,8 @@ router = APIRouter()
 @router.post("/feedback")
 def submit_feedback(feedback: Feedback):
     # Add timestamp
-    feedback_dict = feedback.mode_dump()
-    feedback_dict["created_at"] = datetime.now(datetime.timezone.utc)
+    feedback_dict = feedback.model_dump()
+    feedback_dict["created_at"] = datetime.now(timezone.utc)
 
     # Insert into MongoDB
     feedback_collection.insert_one(feedback_dict)

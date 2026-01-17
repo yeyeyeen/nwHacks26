@@ -7,6 +7,10 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Import controllers after app is created to avoid circular imports
-from app.controller import main_controller
+# Import routers after app is created to avoid circular imports
+from app.controller import main_controller, feedback
+
+# Include all routers
+app.include_router(main_controller.router)
+app.include_router(feedback.router, prefix="/api", tags=["feedback"])
 
