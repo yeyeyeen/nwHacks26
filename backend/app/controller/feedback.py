@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from datetime import datetime, timezone
 from app.models.feedback import Feedback
 from app.services.db import feedback_collection, get_database
+from app.services.feedback_processor import analyze_and_fix_feedback
 
 router = APIRouter()
 
@@ -24,11 +25,17 @@ def submit_feedback(feedback: Feedback):
 
         # Insert into MongoDB
         result = feedback_collection.insert_one(feedback_dict)
+
+        # Process feedback with AI
+        ai_result = analyze_and_fix_feedback(feedback)
+
         return {
             "status": "success",
-            "message": "Feedback saved",
-            "id": str(result.inserted_id)
+            "message": "Feedback saved and processed",
+            "id": str(result.inserted_id),
+            "ai_result": ai_result
         }
+        # TODO: call handle feedback here 
     except Exception as e:
         raise HTTPException(
             status_code=500,

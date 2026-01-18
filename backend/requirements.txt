@@ -6,3 +6,5 @@ python-dotenv
 httpx
 cryptography
 supabase
+PyGitHub
+google-genai
